@@ -1,0 +1,40 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+repositories {
+	maven{
+		url 'http://repo.springsource.org/release'
+		url 'http://repository.codehaus.org'
+	}
+	mavenCentral()
+}
+
+configurations {
+		compile.exclude group: 'commons-logging', name: 'commons-logging'
+	}
+
+// example version variable
+ext.groovyVersion = '2.0.5'
+ext.camelVersion = '2.10.1'
+
+dependencies {
+	// Spring Core + Logback
+	compile group: 'org.springframework', name: 'spring-context', version: '3.1.2.RELEASE' 
+	compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.1'
+	compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.7'
+	// Groovy for Refreshable Beans
+	compile "org.codehaus.groovy:groovy:$ext.groovyVersion"
+	// Camel
+	compile "org.apache.camel:camel-core:$ext.camelVersion"
+	compile "org.apache.camel:camel-spring:$ext.camelVersion"
+
+	testCompile group: 'org.springframework', name: 'spring-test', version: '3.1.2.RELEASE'
+	testCompile group: 'junit', name: 'junit', version: '4.10'
+}
+
+// My Refreshable Bean test requires we enable System.in.read within Gradle.
+run {  
+    standardInput = System.in  
+}
+
+mainClassName = "SpringStart"

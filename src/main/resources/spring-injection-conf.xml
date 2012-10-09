@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:lang="http://www.springframework.org/schema/lang"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.0.xsd
+http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+	
+	
+	<lang:groovy id="processorGroovy" refresh-check-delay="1000" script-source="classpath:ProcessorGroovy.groovy"></lang:groovy>
+    <bean id="processorBean" class="com.thakurn.messages.ProcessorBean">
+    	<property name="processor" ref="processorGroovy" />
+    </bean>
+    
+
+	<camel:camelContext id="camel5">
+	
+	    	<camel:route>
+	    		<camel:from uri="file:src/input?noop=true"/>
+	    		<camel:bean ref="processorBean" method="transformIt" />
+	    		<camel:to uri="file:src/output"/>
+	    	</camel:route>
+	    	<camel:route>
+	    		<camel:from uri="file:src/input?noop=true"/>
+	    		<camel:bean ref="processorBean" method="transformIt" />
+	    		<camel:to uri="file:src/output"/>
+	    	</camel:route>
+	  
+  	</camel:camelContext>
+
+    <!-- this is the bean definition for the Groovy-backed Messenger implementation -->
+    <lang:groovy id="messenger" refresh-check-delay="1000" 
+	    script-source="classpath:Message.groovy">
+        <lang:property name="message" value="I Can Do The Frug" />
+    </lang:groovy>
+
+    <bean id="defaultMessage"
+          class="com.thakurn.messages.DefaultMessage" />
+</beans>
